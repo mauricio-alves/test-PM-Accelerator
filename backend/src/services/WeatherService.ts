@@ -9,12 +9,10 @@ export class WeatherService {
   private static readonly BASE_URL = "https://api.openweathermap.org/data/2.5/weather";
 
   static async getWeather(city: string): Promise<IWeather> {
-    // 1. Log search query
     await prisma.searchLog.create({
       data: { query: city },
     });
 
-    // 2. Fetch from API
     const response = await axios.get(this.BASE_URL, {
       params: {
         q: city,
@@ -34,7 +32,6 @@ export class WeatherService {
       icon: data.weather[0].icon,
     };
 
-    // 3. Persist weather record
     await prisma.weatherRecord.create({
       data: {
         city: weatherData.city,

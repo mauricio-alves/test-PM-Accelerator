@@ -1,7 +1,6 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import axios from "axios";
 import { WeatherService } from "../services/WeatherService";
-import { PrismaClient } from "@prisma/client";
 
 vi.mock("axios");
 vi.mock("@prisma/client", () => {
@@ -30,6 +29,5 @@ describe("WeatherService", () => {
 
     expect(weather.city).toBe("London");
     expect(axios.get).toHaveBeenCalled();
-    // Verify persistence calls would happen here through mocks if needed
   });
 });
