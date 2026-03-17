@@ -1,14 +1,15 @@
 import { describe, it, expect, vi } from "vitest";
 import axios from "axios";
-import { WeatherService } from "../services/WeatherService";
+import { WeatherService } from "../services/WeatherService.js";
 
 vi.mock("axios");
+
 vi.mock("@prisma/client", () => {
-  const mPrisma = {
-    searchLog: { create: vi.fn() },
-    weatherRecord: { create: vi.fn(), findMany: vi.fn() },
-  };
-  return { PrismaClient: vi.fn(() => mPrisma) };
+  class MockPrismaClient {
+    searchLog = { create: vi.fn() };
+    weatherRecord = { create: vi.fn(), findMany: vi.fn() };
+  }
+  return { PrismaClient: MockPrismaClient };
 });
 
 describe("WeatherService", () => {

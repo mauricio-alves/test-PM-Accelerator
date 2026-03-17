@@ -1,5 +1,5 @@
-import { Request, Response } from "express";
-import { WeatherService } from "../services/WeatherService";
+import type { Request, Response } from "express";
+import { WeatherService } from "../services/WeatherService.js";
 
 export class WeatherController {
   static async getWeatherByCity(req: Request, res: Response) {
@@ -11,8 +11,9 @@ export class WeatherController {
 
       const weather = await WeatherService.getWeather(city as string);
       return res.status(200).json(weather);
-    } catch (error: any) {
-      return res.status(500).json({ error: error.message || "Internal Server Error" });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Internal Server Error";
+      return res.status(500).json({ error: message });
     }
   }
 
