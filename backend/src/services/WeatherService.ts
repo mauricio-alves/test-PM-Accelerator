@@ -1,4 +1,3 @@
-import "dotenv/config";
 import axios from "axios";
 import { PrismaClient } from "@prisma/client";
 import type { IWeather } from "../interfaces/IWeather.js";
