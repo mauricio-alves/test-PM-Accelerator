@@ -56,7 +56,7 @@ describe("useWeather", () => {
       await result.current.searchCity("Error");
     });
 
-    expect(result.current.error).toBe("Erro ao buscar clima. Verifique o nome da cidade.");
+    expect(result.current.error).toBe("Erro inesperado. Tente novamente.");
     expect(result.current.loading).toBe(false);
   });
 });

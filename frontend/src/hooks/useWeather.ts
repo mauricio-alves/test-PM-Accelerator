@@ -9,6 +9,7 @@ export const useWeather = () => {
   const [history, setHistory] = useState<WeatherRecord[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [historyLoaded, setHistoryLoaded] = useState(false);
 
   const fetchHistory = useCallback(async () => {
     try {
@@ -16,10 +17,12 @@ export const useWeather = () => {
       setHistory(data);
     } catch (err) {
       console.error("Error fetching history:", err);
+    } finally {
+      setHistoryLoaded(true);
     }
   }, []);
 
-  const searchCity = async (city: string) => {
+  const searchCity = async (city: string): Promise<void> => {
     setLoading(true);
     setError(null);
     try {
@@ -30,13 +33,13 @@ export const useWeather = () => {
       if (isAxiosError(err)) {
         if (err.response?.status === 404) {
           setError("Cidade não encontrada. Verifique o nome e tente novamente.");
+        } else if (err.code === "ERR_NETWORK") {
+          setError("Sem conexão com o servidor. Verifique sua rede.");
         } else {
-          console.error("Error searching city:", err);
-          setError("Erro ao buscar clima. Verifique sua conexão.");
+          setError(`Erro ${err.response?.status ?? "desconhecido"} ao buscar clima.`);
         }
       } else {
-        console.error("Unexpected error:", err);
-        setError("Erro ao buscar clima. Verifique o nome da cidade.");
+        setError("Erro inesperado. Tente novamente.");
       }
       setWeather(null);
     } finally {
@@ -54,6 +57,7 @@ export const useWeather = () => {
     loading,
     error,
     searchCity,
+    historyLoaded,
     refreshHistory: fetchHistory,
   };
 };
