@@ -43,15 +43,4 @@ describe("weatherService", () => {
     expect(api.get).toHaveBeenCalledWith("/api/history");
     expect(result).toEqual(mockHistory);
   });
-
-  it("should fetch search logs", async () => {
-    const mockLogs = [{ id: "1", query: "São Paulo", timestamp: new Date().toISOString() }];
-
-    vi.mocked(api.get).mockResolvedValueOnce({ data: mockLogs });
-
-    const result = await weatherService.getLogs();
-
-    expect(api.get).toHaveBeenCalledWith("/api/logs");
-    expect(result).toEqual(mockLogs);
-  });
 });

@@ -4,9 +4,12 @@ import { SearchBar } from "../SearchBar";
 import { WeatherCard } from "../WeatherCard";
 import { HistoryList } from "../HistoryList";
 import { useWeather } from "@/hooks/useWeather";
+import { WeatherCardSkeleton } from "../WeatherCardSkeleton";
 
 export function WeatherDashboard() {
-  const { weather, history, loading, error, searchCity } = useWeather();
+  const { weather, history, loading, error, searchCity, historyLoaded } = useWeather();
+
+  const weatherContent = loading ? <WeatherCardSkeleton /> : weather ? <WeatherCard weather={weather} /> : null;
 
   return (
     <div className="flex flex-col gap-8 w-full">
@@ -15,18 +18,16 @@ export function WeatherDashboard() {
           Weather <span className="text-white/60">Assistant</span>
         </h1>
         <SearchBar onSearch={searchCity} isLoading={loading} />
-        {error && <p className="text-red-400 text-center font-medium animate-pulse">{error}</p>}
+        {error && <p className="text-red-400 text-center font-medium animate-in fade-in duration-300">{error}</p>}
       </section>
 
-      {weather && (
-        <section className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-          <WeatherCard weather={weather} />
+      <section className="animate-in fade-in slide-in-from-bottom-4 duration-500">{weatherContent}</section>
+
+      {historyLoaded && (
+        <section className="mt-8">
+          <HistoryList history={history} />
         </section>
       )}
-
-      <section className="mt-8">
-        <HistoryList history={history} />
-      </section>
 
       <footer className="mt-auto pt-12 text-center text-white/20 text-sm">PM Accelerator AI Engineer Intern - Weather App Challenge</footer>
     </div>

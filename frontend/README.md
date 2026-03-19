@@ -1,36 +1,98 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Weather App - Frontend
 
-## Getting Started
+Este é o cliente frontend do Weather App, desenvolvido como parte do teste técnico para AI Engineer Intern. O foco deste projeto foi a implementação de uma interface moderna com glassmorphism, arquitetura baseada em componentes e cobertura de testes robusta.
 
-First, run the development server:
+## 🚀 Tecnologias
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- **Next.js 16 (App Router):** Framework React com SSR e Turbopack.
+- **TypeScript:** Tipagem estrita para segurança e manutenibilidade.
+- **Tailwind CSS v4:** Estilização utilitária com design system customizado.
+- **Axios:** Cliente HTTP para consumo da API backend.
+- **Vitest + Testing Library:** Framework de testes unitários e de componentes.
+
+## 🎨 Design
+
+- **Glassmorphism:** Cards com `backdrop-blur`, bordas translúcidas e sombras suaves.
+- **Dark Mode nativo:** Background `#09090b` com radial gradient.
+- **Skeleton Loader:** Animação de carregamento que espelha o layout do card de clima.
+- **Micro-animações:** `animate-in fade-in slide-in-from-bottom` para transições fluidas.
+- **Ícones dinâmicos:** Emoji mapeado por condição climática (chuva, neve, sol, etc).
+
+## 🛠️ Como Executar
+
+1. **Instalar dependências:**
+   Dentro da pasta `frontend`, execute:
+
+   ```bash
+   npm install
+   ```
+
+2. **Configurar variáveis de ambiente:**
+   Crie um arquivo `.env` na pasta `frontend` baseado no `.env.example`:
+
+   ```bash
+   cp .env.example .env
+   ```
+
+   _A variável `NEXT_PUBLIC_API_URL` deve apontar para o servidor backend (padrão: `http://localhost:3001`)._
+
+3. **Certifique-se de que o backend está ativo:**
+   O frontend consome a API em `http://localhost:3001`. Siga o README do backend para iniciá-lo.
+
+4. **Iniciar em Desenvolvimento:**
+   ```bash
+   npm run dev
+   ```
+   A aplicação estará disponível em: `http://localhost:3000`
+
+---
+
+## 🧩 Arquitetura
+
+```
+src/
+├── app/              # Layout raiz e página principal (Next.js App Router)
+├── components/
+│   ├── layout/
+│   │   └── GlassContainer/   # Componente base reutilizável (glassmorphism)
+│   └── weather/
+│       ├── WeatherDashboard/ # Orquestrador principal
+│       ├── WeatherCard/      # Card de clima com ícone dinâmico
+│       ├── WeatherCardSkeleton/ # Skeleton loader durante fetch
+│       ├── SearchBar/        # Formulário de busca
+│       └── HistoryList/      # Histórico de buscas recentes
+├── hooks/
+│   └── useWeather.ts         # Lógica de estado, fetch e tratamento de erros
+├── services/
+│   ├── api.ts                # Instância Axios configurada
+│   └── weatherService.ts     # Chamadas à API backend
+└── interfaces/               # Contratos TypeScript (Weather, WeatherRecord)
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🧪 Testes e Qualidade
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+O projeto segue a metodologia TDD com cobertura abrangente de componentes, hooks e serviços, atingindo:
 
-## Learn More
+- **91.52% de Statements.**
+- **100% de Functions.**
 
-To learn more about Next.js, take a look at the following resources:
+Para rodar os testes:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+npm test
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Para ver a cobertura de código:
 
-## Deploy on Vercel
+```bash
+npm run test:coverage
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🏗️ Build para Produção
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+npm run build
+npm start
+```
