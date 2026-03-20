@@ -15,7 +15,7 @@ export function HistoryList({ history }: Readonly<HistoryListProps>) {
       <h3 className="text-white font-semibold text-lg px-2">Buscas Recentes</h3>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {history.map((record) => (
-          <GlassContainer key={record.id} className="p-4 flex justify-between items-center text-white">
+          <GlassContainer key={record.id} as="article" aria-label={`Histórico de clima para ${record.city}`} className="p-4 flex justify-between items-center text-white">
             <div>
               <p className="font-bold">{record.city}</p>
               <p className="text-sm text-white/60">{record.description}</p>
