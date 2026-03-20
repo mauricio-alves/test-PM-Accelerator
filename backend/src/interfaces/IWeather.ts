@@ -1,3 +1,5 @@
+import type { IForecastDay } from "./IForecastDay.js";
+
 export interface IWeather {
   city: string;
   temp: number;
@@ -5,4 +7,6 @@ export interface IWeather {
   humidity: number;
   windSpeed: number;
   icon: string;
+  recommendation?: string;
+  forecast?: IForecastDay[];
 }

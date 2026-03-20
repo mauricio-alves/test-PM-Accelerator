@@ -1,5 +1,6 @@
 import { GlassContainer } from "../../layout/GlassContainer";
 import { WeatherRecord } from "@/interfaces/WeatherRecord";
+import { formatDateTime } from "@/utils/dateUtils";
 
 interface HistoryListProps {
   history: WeatherRecord[];
@@ -19,6 +20,7 @@ export function HistoryList({ history }: Readonly<HistoryListProps>) {
             <div>
               <p className="font-bold">{record.city}</p>
               <p className="text-sm text-white/60">{record.description}</p>
+              <p className="text-[10px] text-white/40 mt-1">{formatDateTime(record.createdAt)}</p>
             </div>
             <div className="text-xl font-bold">{Math.round(record.temp)}°C</div>
           </GlassContainer>

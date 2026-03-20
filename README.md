@@ -9,11 +9,13 @@ O Weather App é uma solução completa que combina um backend robusto em Node.j
 ### Principais Funcionalidades
 
 - **Busca Global**: Pesquisa por termos de localização (Cidades, Países).
-- **Dados Reais**: Integração com a API Open-Meteo para previsões precisas.
-- **Histórico Persistente**: Armazenamento de consultas recentes no PostgreSQL.
-- **UI Premium**: Interface com Glassmorphism, Skeleton Loaders e design responsivo.
-- **Segurança**: Middlewares de proteção (Helmet, Rate Limit, CORS) e validação de dados.
-- **Documentação**: API autodocumentada com Swagger.
+- **Previsão Avançada**: Exibição detalhada das condições atuais e **previsão para os próximos 5 dias**.
+- **IA & Recomendações**: Camada de inteligência que sugere atividades e vestimenta com base no clima.
+- **Widgets Dinâmicos**: Integração com Google Maps e buscas automáticas no YouTube para a cidade.
+- **Histórico & Logs**: Persistência de consultas recentes e termos buscados no PostgreSQL.
+- **UI Premium**: Interface Glassmorphism com Skeleton Loaders e animações fluidas.
+- **Resiliência**: Backend com **Axios Retries** e cliente Prisma otimizado (Singleton).
+- **Segurança**: Proteção com Helmet, Rate Limit, CORS e documentação Swagger (/api-docs).
 
 ---
 
@@ -29,21 +31,26 @@ O projeto está organizado em duas partes principais:
 ## 🚀 Como Iniciar
 
 ### Pré-requisitos
+
 - **Node.js** (v18+)
 - **Docker & Docker Compose** (para o banco de dados)
 
 ### Passo a Passo Rápido
 
 1. **Clone o repositório**:
+
    ```bash
    git clone <repo-url>
    cd test-PM-Accelerator
    ```
 
-2. **Inicie o Banco de Dados**:
+2. **Inicie o Projeto via Docker (Stack Completa)**:
+
    ```bash
-   docker-compose up -d db
+   docker-compose up -d
    ```
+
+   _Isso subirá o Backend (3001), Frontend (3000) e o Banco de Dados (5432)._
 
 3. **Configure e rode o Backend**:
    Consulte o [README do Backend](file:///c:/Users/maual/Downloads/test-PM-Accelerator/backend/README.md) para detalhes de instalação e variáveis de ambiente.
@@ -55,9 +62,10 @@ O projeto está organizado em duas partes principais:
 
 ## 🧪 Qualidade de Código (TDD)
 
-Ambas as camadas do projeto foram desenvolvidas seguindo práticas de **Clean Code** e **TDD**:
-- **Backend**: 100% de cobertura no `WeatherService.ts`.
-- **Frontend**: >90% de cobertura em componentes, hooks e serviços.
+Ambas as camadas do projeto foram desenvolvidas seguindo práticas de **Clean Code**, **SOLID** e **TDD**:
+
+- **Backend**: ~90% de cobertura no `WeatherService.ts`.
+- **Frontend**: >84% de cobertura global (incluindo Suíte de Utils e Componentes).
 
 ---
 
