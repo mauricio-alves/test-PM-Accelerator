@@ -1,3 +1,5 @@
+import { ForecastDay } from "./ForecastDay";
+
 export interface Weather {
   city: string;
   temp: number;
@@ -5,4 +7,6 @@ export interface Weather {
   humidity: number;
   windSpeed: number;
   icon: string;
+  recommendation?: string;
+  forecast?: ForecastDay[];
 }

@@ -4,24 +4,24 @@ import { WeatherService } from "../services/WeatherService.js";
 
 vi.mock("axios");
 
-const mockPrisma = {
-  searchLog: {
-    create: vi.fn(),
-    findMany: vi.fn(),
-  },
-  weatherRecord: {
-    create: vi.fn(),
-    findMany: vi.fn(),
-  },
-};
-
-vi.mock("@prisma/client", () => {
+const { mockPrisma } = vi.hoisted(() => {
   return {
-    PrismaClient: vi.fn().mockImplementation(function () {
-      return mockPrisma;
-    }),
+    mockPrisma: {
+      searchLog: {
+        create: vi.fn(),
+        findMany: vi.fn(),
+      },
+      weatherRecord: {
+        create: vi.fn(),
+        findMany: vi.fn(),
+      },
+    },
   };
 });
+
+vi.mock("../lib/prisma.js", () => ({
+  prisma: mockPrisma,
+}));
 
 describe("WeatherService", () => {
   beforeEach(() => {

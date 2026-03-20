@@ -1,21 +1,24 @@
 import axios from "axios";
-import { PrismaClient } from "@prisma/client";
+import axiosRetry from "axios-retry";
 import type { IWeather } from "../interfaces/IWeather.js";
+import type { IForecastDay } from "../interfaces/IForecastDay.js";
+import { WMO_WEATHER_CODES } from "../utils/weatherConstants.js";
+
+axiosRetry(axios, {
+  retries: 3,
+  retryDelay: axiosRetry.exponentialDelay,
+  retryCondition: (error) => {
+    return axiosRetry.isNetworkOrIdempotentRequestError(error) || error.code === "ECONNRESET";
+  },
+});
+
+import { prisma } from "../lib/prisma.js";
 
 export class WeatherService {
-  private static prisma: PrismaClient;
   private static readonly GEO_URL = "https://geocoding-api.open-meteo.com/v1/search";
   private static readonly WEATHER_URL = "https://api.open-meteo.com/v1/forecast";
 
-  private static getPrisma() {
-    if (!this.prisma) {
-      this.prisma = new PrismaClient();
-    }
-    return this.prisma;
-  }
-
   static async getWeather(city: string): Promise<IWeather> {
-    const prisma = this.getPrisma();
     await prisma.searchLog.create({
       data: { query: city },
     });
@@ -35,10 +38,26 @@ export class WeatherService {
         latitude,
         longitude,
         current_weather: true,
+        daily: "weathercode,temperature_2m_max,temperature_2m_min",
+        timezone: "auto",
       },
     });
 
     const current = weatherResponse.data.current_weather;
+    const daily = weatherResponse.data.daily;
+
+    const forecast: IForecastDay[] = [];
+    if (daily) {
+      for (let i = 1; i < 6; i++) {
+        forecast.push({
+          date: daily.time[i],
+          maxTemp: daily.temperature_2m_max[i],
+          minTemp: daily.temperature_2m_min[i],
+          description: this.getWeatherDescription(daily.weathercode[i]),
+          icon: daily.weathercode[i].toString(),
+        });
+      }
+    }
 
     const weatherData: IWeather = {
       city: name,
@@ -47,6 +66,8 @@ export class WeatherService {
       humidity: 0,
       windSpeed: current.windspeed,
       icon: current.weathercode.toString(),
+      forecast,
+      recommendation: this.generateRecommendation(current.temperature, current.weathercode),
     };
 
     await prisma.weatherRecord.create({
@@ -63,30 +84,23 @@ export class WeatherService {
     return weatherData;
   }
 
+  private static generateRecommendation(temp: number, code: number): string {
+    if (code >= 95) return "Trovoada detectada. Fique em casa e evite aparelhos eletrônicos ligados à tomada.";
+    if (code >= 80) return "Chuva forte. Não esqueça o guarda-chuva e evite áreas com risco de alagamento.";
+    if (code >= 51) return "Garoando. Um casaco leve e guarda-chuva são recomendados.";
+
+    if (temp > 30) return "Está muito quente! Beba muita água e use protetor solar.";
+    if (temp < 15) return "Clima frio. Hora de tirar o casaco do armário e se manter aquecido.";
+    if (temp >= 15 && temp <= 25 && code === 0) return "Clima perfeito para passear no parque ou praticar esportes ao ar livre.";
+
+    return "Dia tranquilo. Aproveite o clima e mantenha-se hidratado!";
+  }
+
   private static getWeatherDescription(code: number): string {
-    const codes: Record<number, string> = {
-      0: "Clear sky",
-      1: "Mainly clear",
-      2: "Partly cloudy",
-      3: "Overcast",
-      45: "Fog",
-      48: "Depositing rime fog",
-      51: "Light drizzle",
-      53: "Moderate drizzle",
-      55: "Dense drizzle",
-      61: "Slight rain",
-      63: "Moderate rain",
-      65: "Heavy rain",
-      71: "Slight snow fall",
-      73: "Moderate snow fall",
-      75: "Heavy snow fall",
-      95: "Thunderstorm",
-    };
-    return codes[code] || "Unknown";
+    return WMO_WEATHER_CODES[code] || "Unknown";
   }
 
   static async getHistory() {
-    const prisma = this.getPrisma();
     return prisma.weatherRecord.findMany({
       orderBy: { createdAt: "desc" },
       take: 10,
@@ -94,7 +108,6 @@ export class WeatherService {
   }
 
   static async getSearchLogs() {
-    const prisma = this.getPrisma();
     return prisma.searchLog.findMany({
       orderBy: { timestamp: "desc" },
       take: 20,

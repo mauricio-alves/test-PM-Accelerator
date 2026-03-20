@@ -57,26 +57,33 @@ src/
 │   │   └── GlassContainer/   # Componente base reutilizável (glassmorphism)
 │   └── weather/
 │       ├── WeatherDashboard/ # Orquestrador principal
-│       ├── WeatherCard/      # Card de clima com ícone dinâmico
+│       ├── WeatherCard/      # Card de clima com IA Recommendations
+│       ├── ForecastList/     # Lista de previsão de 5 dias [NEW]
+│       ├── ExtraWidgets/     # Maps e YouTube widgets [NEW]
 │       ├── WeatherCardSkeleton/ # Skeleton loader durante fetch
 │       ├── SearchBar/        # Formulário de busca
-│       └── HistoryList/      # Histórico de buscas recentes
+│       └── HistoryList/      # Histórico de buscas recentes (com timestamps)
 ├── hooks/
 │   └── useWeather.ts         # Lógica de estado, fetch e tratamento de erros
 ├── services/
-│   ├── api.ts                # Instância Axios configurada
+│   ├── api.ts                # Instância Axios (com retries no backend)
 │   └── weatherService.ts     # Chamadas à API backend
-└── interfaces/               # Contratos TypeScript (Weather, WeatherRecord)
+├── utils/                    # Utilitários centralizados [REFAC]
+│   ├── dateUtils.ts          # Formatação de datas PT-BR
+│   ├── weatherUtils.ts       # Mapeamento de ícone WMO
+│   └── translations.ts       # i18n para descrições
+└── interfaces/               # Contratos TypeScript separados por arquivo
 ```
 
 ---
 
 ## 🧪 Testes e Qualidade
 
-O projeto segue a metodologia TDD com cobertura abrangente de componentes, hooks e serviços, atingindo:
+O projeto segue a metodologia TDD com cobertura abrangente:
 
-- **91.52% de Statements.**
-- **100% de Functions.**
+- **84.05% de Statements (Global).**
+- **94.20% de Lines (Global).**
+- **100% Cobertura nos utilitários críticos.**
 
 Para rodar os testes:
 

@@ -27,25 +27,30 @@ Siga estas etapas na ordem exata para garantir o funcionamento correto:
 
 1. **Instalar dependências:**
    Dentro da pasta `backend`, execute:
+
    ```bash
    npm install
    ```
 
 2. **Configurar variáveis de ambiente:**
    Crie um arquivo `.env` na pasta `backend` baseado no `.env.example`:
+
    ```bash
    cp .env.example .env
    ```
-   *Nota: Certifique-se de ajustar as credenciais conforme seu ambiente.*
+
+   _Nota: Certifique-se de ajustar as credenciais conforme seu ambiente._
 
 3. **Subir o Banco de Dados (Docker):**
    Na **raiz do projeto** (onde está o arquivo `docker-compose.yml`), execute:
+
    ```bash
    docker-compose up -d db
    ```
 
 4. **Preparar o Banco de Dados (Prisma):**
    De volta à pasta `backend`, gere o cliente e sincronize o schema:
+
    ```bash
    npx prisma generate
    npx prisma db push
@@ -66,15 +71,18 @@ A documentação interativa completa pode ser acessada em: `http://localhost:300
 ### Endpoints Disponíveis:
 
 #### 1. `GET /api/weather`
-- **Descrição:** Busca os dados climáticos atuais de uma cidade.
+
+- **Descrição:** Busca os dados climáticos atuais, previsão de 5 dias e recomendações de IA.
 - **Parâmetros:** `city` (string, mandatório).
-- **Funcionamento:** Consulta a API do Open-Meteo, salva o resultado no histórico de consultas e registra o log da busca.
+- **Retorno:** Objeto contendo `temp`, `description`, `forecast[]` e `recommendation`.
 
 #### 2. `GET /api/history`
+
 - **Descrição:** Retorna o histórico das últimas previsões consultadas.
 - **Retorno:** Lista dos últimos 10 registros salvos no banco de dados, ordenados pelo mais recente.
 
 #### 3. `GET /api/logs`
+
 - **Descrição:** Retorna os logs de termos pesquisados pelos usuários.
 - **Retorno:** Lista das últimas 20 consultas realizadas (apenas o termo e o timestamp).
 
@@ -84,15 +92,17 @@ A documentação interativa completa pode ser acessada em: `http://localhost:300
 
 O projeto segue a metodologia TDD (Test Driven Development) com foco no `WeatherService.ts`, atingindo:
 
-- **100% de cobertura de Statements/Lines.**
-- **100% de cobertura de Functions.**
+- **~90% de cobertura de Statements/Lines.**
+- **100% de cobertura nos utilitários críticos.**
 
 Para rodar os testes:
 
 ```bash
 npm test
 ```
+
 Para ver a cobertura de código:
+
 ```bash
 npm test -- --coverage
 ```
