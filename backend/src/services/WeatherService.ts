@@ -85,4 +85,29 @@ export class WeatherService {
 
     return CsvFormatter.formatHistory(history);
   }
+
+  static async deleteHistoryRecord(id: string) {
+    return prisma.weatherRecord.deleteMany({
+      where: { id },
+    });
+  }
+
+  static async clearHistory() {
+    return prisma.weatherRecord.deleteMany();
+  }
+
+  static async exportHistory(format: "json" | "csv") {
+    const history = await prisma.weatherRecord.findMany({
+      orderBy: { createdAt: "desc" },
+    });
+
+    if (format === "json") {
+      return JSON.stringify(history, null, 2);
+    }
+
+    const headers = "id,city,temp,description,humidity,windSpeed,icon,createdAt\n";
+    const rows = history.map((r) => `${r.id},"${r.city}",${r.temp},"${r.description}",${r.humidity},${r.windSpeed},"${r.icon}",${r.createdAt.toISOString()}`).join("\n");
+
+    return headers + rows;
+  }
 }

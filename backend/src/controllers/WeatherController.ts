@@ -64,7 +64,6 @@ export class WeatherController {
       if (format !== "json" && format !== "csv") {
         return res.status(400).json({ error: "Format must be json or csv" });
       }
-
       const data = await WeatherService.exportHistory(format);
       const filename = `weather_history_${new Date().toISOString().split("T")[0]}.${format}`;
 

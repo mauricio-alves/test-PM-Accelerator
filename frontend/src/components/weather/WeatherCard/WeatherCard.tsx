@@ -8,7 +8,6 @@ import { WeatherRecommendation } from "./WeatherRecommendation";
 interface WeatherCardProps {
   weather: Weather;
 }
-
 export function WeatherCard({ weather }: Readonly<WeatherCardProps>) {
   const { language, t } = useLanguage();
   const icon = getWeatherIcon(weather.icon);
