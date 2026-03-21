@@ -119,7 +119,7 @@ Complete interactive documentation can be accessed at: `http://localhost:3001/ap
 
 The project follows TDD (Test Driven Development) methodology focusing on `WeatherService.ts`, achieving:
 
-- **92.85% Line coverage in `WeatherService.ts`.**
+- **94% Line coverage in `WeatherService.ts`.**
 - **100% Coverage in `WeatherRepository.ts`.**
 - **90.0% Coverage in `MeteoProvider.ts`.**
 - **100% Coverage in critical utilities.**
@@ -128,13 +128,13 @@ The project follows TDD (Test Driven Development) methodology focusing on `Weath
 To run tests:
 
 ```bash
-npm test
+npm run test
 ```
 
 To see code coverage:
 
 ```bash
-npm test -- --coverage
+npm run test:coverage
 ```
 
 ## 🏗️ Production Build

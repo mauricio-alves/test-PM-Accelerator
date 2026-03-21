@@ -68,10 +68,10 @@ The project is organized into two main parts:
 
 Both layers of the project were developed following **Clean Code**, **SOLID**, and **TDD** practices:
 
-- **Backend**: **92.85%** coverage in `WeatherService.ts`.
-- **Frontend**: **89.7%** coverage in `useWeather.ts` hook and **80%** global in critical components.
-- **Architecture (SRP)**: Ultra-modular code refactored with Repositories, Providers, and atomic components for separation of concerns. [NEW]
-- **Resilience**: Full validation of error flows and **automatic UI rollback** (Optimistic UI).
+- **Backend**: **94%** line coverage in `WeatherService.ts` and 100% in `WeatherRepository.ts`.
+- **Frontend**: **89.7%** coverage in `useWeather.ts` hook and **> 80%** global coverage across critical components and utils.
+- **Architecture (SRP)**: Ultra-modular architecture with strict separation of concerns (Repositories, Providers, Atomic Components).
+- **Resilience**: Full error flow validation and **Optimistic UI with automatic rollback**.
 
 ---
 

@@ -99,9 +99,9 @@ src/
 
 The project follows TDD methodology with comprehensive coverage:
 
-- **89.79% Coverage in the Main Hook (`useWeather`).**
-- **80% Coverage in `HistoryList` (Interactions and Rollback).**
-- **100% Coverage in critical utilities and WeatherCard.**
+- **90.19% Coverage in the Main Hook (`useWeather`).**
+- **100% Coverage in critical utilities (`dateUtils`, `api`).**
+- **> 80% Global Coverage across critical components.**
 
 To run the tests:
 
