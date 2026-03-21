@@ -11,7 +11,7 @@ export interface GlassContainerProps {
 
 export function GlassContainer({ children, className = "", as: Tag = "div", "aria-label": ariaLabel }: Readonly<GlassContainerProps>) {
   return (
-    <Tag className={`bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl shadow-xl ${className}`} aria-label={ariaLabel}>
+    <Tag className={`bg-(--card-bg) backdrop-blur-md border border-(--card-border) rounded-2xl shadow-xl ${className}`} aria-label={ariaLabel}>
       {children}
     </Tag>
   );

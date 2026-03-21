@@ -14,6 +14,8 @@ const { mockPrisma } = vi.hoisted(() => {
       weatherRecord: {
         create: vi.fn(),
         findMany: vi.fn(),
+        delete: vi.fn(),
+        deleteMany: vi.fn(),
       },
     },
   };
@@ -95,5 +97,38 @@ describe("WeatherService", () => {
       orderBy: { timestamp: "desc" },
       take: 20,
     });
+  });
+});
+
+describe("WeatherService CRUD & Export", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("should delete a specific history record", async () => {
+    mockPrisma.weatherRecord.deleteMany.mockResolvedValue({ count: 1 });
+    await WeatherService.deleteHistoryRecord("123");
+    expect(mockPrisma.weatherRecord.deleteMany).toHaveBeenCalledWith({ where: { id: "123" } });
+  });
+
+  it("should clear all history", async () => {
+    mockPrisma.weatherRecord.deleteMany.mockResolvedValue({ count: 5 });
+    await WeatherService.clearHistory();
+    expect(mockPrisma.weatherRecord.deleteMany).toHaveBeenCalled();
+  });
+
+  it("should export history as JSON", async () => {
+    const mockData = [{ city: "London", temp: 15 }];
+    mockPrisma.weatherRecord.findMany.mockResolvedValue(mockData);
+    const result = await WeatherService.exportHistory("json");
+    expect(result).toBe(JSON.stringify(mockData, null, 2));
+  });
+
+  it("should export history as CSV", async () => {
+    const mockData = [{ city: "London", temp: 15, description: "Clear", humidity: 50, windSpeed: 10, icon: "01d", createdAt: new Date("2024-01-01") }];
+    mockPrisma.weatherRecord.findMany.mockResolvedValue(mockData);
+    const result = await WeatherService.exportHistory("csv");
+    expect(result).toContain("id,city,temp,description,humidity,windSpeed,icon,createdAt");
+    expect(result).toContain("London");
   });
 });

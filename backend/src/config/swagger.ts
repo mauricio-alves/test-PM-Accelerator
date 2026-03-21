@@ -99,6 +99,32 @@ const options: swaggerJsdoc.Options = {
             500: { description: "Erro interno" },
           },
         },
+        delete: {
+          summary: "Limpa todo o histórico de buscas",
+          responses: {
+            204: { description: "Sucesso (Sem conteúdo)" },
+            500: { description: "Erro interno" },
+          },
+        },
+      },
+      "/history/{id}": {
+        delete: {
+          summary: "Exclui um registro específico do histórico",
+          parameters: [
+            {
+              name: "id",
+              in: "path",
+              required: true,
+              schema: { type: "string" },
+              description: "ID do registro",
+            },
+          ],
+          responses: {
+            204: { description: "Sucesso (Sem conteúdo)" },
+            400: { description: "ID é obrigatório" },
+            500: { description: "Erro interno" },
+          },
+        },
       },
       "/logs": {
         get: {
@@ -115,6 +141,25 @@ const options: swaggerJsdoc.Options = {
                 },
               },
             },
+            500: { description: "Erro interno" },
+          },
+        },
+      },
+      "/export": {
+        get: {
+          summary: "Exporta o histórico completo",
+          parameters: [
+            {
+              name: "format",
+              in: "query",
+              required: true,
+              schema: { type: "string", enum: ["json", "csv"] },
+              description: "Formato do arquivo",
+            },
+          ],
+          responses: {
+            200: { description: "Sucesso (Download do arquivo)" },
+            400: { description: "Formato inválido" },
             500: { description: "Erro interno" },
           },
         },

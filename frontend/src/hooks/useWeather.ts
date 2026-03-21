@@ -32,18 +32,49 @@ export const useWeather = () => {
     } catch (err: unknown) {
       if (isAxiosError(err)) {
         if (err.response?.status === 404) {
-          setError("Cidade não encontrada. Verifique o nome e tente novamente.");
+          setError("error.city_not_found");
         } else if (err.code === "ERR_NETWORK") {
-          setError("Sem conexão com o servidor. Verifique sua rede.");
+          setError("error.network");
         } else {
-          setError(`Erro ${err.response?.status ?? "desconhecido"} ao buscar clima.`);
+          setError("error.generic");
         }
       } else {
-        setError("Erro inesperado. Tente novamente.");
+        setError("error.unexpected");
       }
       setWeather(null);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const deleteRecord = async (id: string) => {
+    const previousHistory = [...history];
+    setHistory((prev) => prev.filter((r) => r.id !== id));
+
+    try {
+      await weatherService.deleteRecord(id);
+    } catch (err) {
+      console.error("Error deleting record:", err);
+      setHistory(previousHistory);
+    }
+  };
+
+  const clearHistory = async () => {
+    const previousHistory = [...history];
+    setHistory([]);
+    try {
+      await weatherService.clearHistory();
+    } catch (err) {
+      console.error("Error clearing history:", err);
+      setHistory(previousHistory);
+    }
+  };
+
+  const exportData = async (format: "json" | "csv") => {
+    try {
+      await weatherService.exportData(format);
+    } catch (err) {
+      console.error("Error exporting data:", err);
     }
   };
 
@@ -57,6 +88,9 @@ export const useWeather = () => {
     loading,
     error,
     searchCity,
+    deleteRecord,
+    clearHistory,
+    exportData,
     historyLoaded,
     refreshHistory: fetchHistory,
   };

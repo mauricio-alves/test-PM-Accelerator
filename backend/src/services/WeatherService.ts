@@ -85,15 +85,15 @@ export class WeatherService {
   }
 
   private static generateRecommendation(temp: number, code: number): string {
-    if (code >= 95) return "Trovoada detectada. Fique em casa e evite aparelhos eletrônicos ligados à tomada.";
-    if (code >= 80) return "Chuva forte. Não esqueça o guarda-chuva e evite áreas com risco de alagamento.";
-    if (code >= 51) return "Garoando. Um casaco leve e guarda-chuva são recomendados.";
+    if (code >= 95) return "rec.thunderstorm";
+    if (code >= 80) return "rec.heavy_rain";
+    if (code >= 51) return "rec.drizzle";
 
-    if (temp > 30) return "Está muito quente! Beba muita água e use protetor solar.";
-    if (temp < 15) return "Clima frio. Hora de tirar o casaco do armário e se manter aquecido.";
-    if (temp >= 15 && temp <= 25 && code === 0) return "Clima perfeito para passear no parque ou praticar esportes ao ar livre.";
+    if (temp > 30) return "rec.hot";
+    if (temp < 15) return "rec.cold";
+    if (temp >= 15 && temp <= 25 && code === 0) return "rec.perfect";
 
-    return "Dia tranquilo. Aproveite o clima e mantenha-se hidratado!";
+    return "rec.normal";
   }
 
   private static getWeatherDescription(code: number): string {
@@ -112,5 +112,30 @@ export class WeatherService {
       orderBy: { timestamp: "desc" },
       take: 20,
     });
+  }
+
+  static async deleteHistoryRecord(id: string) {
+    return prisma.weatherRecord.deleteMany({
+      where: { id },
+    });
+  }
+
+  static async clearHistory() {
+    return prisma.weatherRecord.deleteMany();
+  }
+
+  static async exportHistory(format: "json" | "csv") {
+    const history = await prisma.weatherRecord.findMany({
+      orderBy: { createdAt: "desc" },
+    });
+
+    if (format === "json") {
+      return JSON.stringify(history, null, 2);
+    }
+
+    const headers = "id,city,temp,description,humidity,windSpeed,icon,createdAt\n";
+    const rows = history.map((r) => `${r.id},"${r.city}",${r.temp},"${r.description}",${r.humidity},${r.windSpeed},"${r.icon}",${r.createdAt.toISOString()}`).join("\n");
+
+    return headers + rows;
   }
 }

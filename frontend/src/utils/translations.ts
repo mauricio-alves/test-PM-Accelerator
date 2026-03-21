@@ -17,6 +17,7 @@ const TRANSLATIONS: Record<string, string> = {
   Thunderstorm: "Trovoada",
 };
 
-export function translateDescription(description: string): string {
+export function translateDescription(description: string, lang: string): string {
+  if (lang === "en") return description;
   return TRANSLATIONS[description] || description;
 }

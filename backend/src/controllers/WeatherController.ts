@@ -42,4 +42,44 @@ export class WeatherController {
       return res.status(500).json({ error: "An internal error occurred" });
     }
   }
+
+  static async deleteRecord(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+      if (!id) return res.status(400).json({ error: "ID is required" });
+      await WeatherService.deleteHistoryRecord(id as string);
+      return res.status(204).send();
+    } catch (error) {
+      console.error("[deleteRecord]", error);
+      return res.status(500).json({ error: "An internal error occurred" });
+    }
+  }
+
+  static async clearAllHistory(req: Request, res: Response) {
+    try {
+      await WeatherService.clearHistory();
+      return res.status(204).send();
+    } catch (error) {
+      console.error("[clearAllHistory]", error);
+      return res.status(500).json({ error: "An internal error occurred" });
+    }
+  }
+
+  static async exportData(req: Request, res: Response) {
+    try {
+      const format = req.query.format as string;
+      if (format !== "json" && format !== "csv") {
+        return res.status(400).json({ error: "Format must be json or csv" });
+      }
+      const data = await WeatherService.exportHistory(format);
+      const filename = `weather_history_${new Date().toISOString().split("T")[0]}.${format}`;
+
+      res.setHeader("Content-Type", format === "json" ? "application/json" : "text/csv");
+      res.setHeader("Content-Disposition", `attachment; filename=${filename}`);
+      return res.status(200).send(data);
+    } catch (error) {
+      console.error("[exportData]", error);
+      return res.status(500).json({ error: "An internal error occurred" });
+    }
+  }
 }

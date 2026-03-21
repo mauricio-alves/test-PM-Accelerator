@@ -86,14 +86,29 @@ A documentação interativa completa pode ser acessada em: `http://localhost:300
 - **Descrição:** Retorna os logs de termos pesquisados pelos usuários.
 - **Retorno:** Lista das últimas 20 consultas realizadas (apenas o termo e o timestamp).
 
+#### 4. `DELETE /api/history/:id` [NEW]
+
+- **Descrição:** Exclui um registro específico do histórico (operação idempotente).
+
+#### 5. `DELETE /api/history` [NEW]
+
+- **Descrição:** Limpa todo o histórico de buscas do banco de dados.
+
+#### 6. `GET /api/export` [NEW]
+
+- **Descrição:** Exporta o histórico completo.
+- **Parâmetros:** `format` (json ou csv).
+- **Retorno:** Download do arquivo formatado.
+
 ---
 
 ## 🧪 Testes e Qualidade (Opcional)
 
 O projeto segue a metodologia TDD (Test Driven Development) com foco no `WeatherService.ts`, atingindo:
 
-- **~90% de cobertura de Statements/Lines.**
+- **92.1% de cobertura de linhas no `WeatherService.ts`.**
 - **100% de cobertura nos utilitários críticos.**
+- **Resiliência:** Sistema de retries para APIs externas e tratamento de erros geográficos.
 
 Para rodar os testes:
 

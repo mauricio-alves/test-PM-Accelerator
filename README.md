@@ -10,11 +10,15 @@ O Weather App é uma solução completa que combina um backend robusto em Node.j
 
 - **Busca Global**: Pesquisa por termos de localização (Cidades, Países).
 - **Previsão Avançada**: Exibição detalhada das condições atuais e **previsão para os próximos 5 dias**.
-- **IA & Recomendações**: Camada de inteligência que sugere atividades e vestimenta com base no clima.
+- **IA & Recomendações**: Sugestões inteligentes de atividades e vestimenta traduzidas dinamicamente.
+- **Internacionalização (i18n)**: Suporte completo para **Português (PT-BR)** e **Inglês (EN)** com persistência de preferência. [NEW]
+- **Gestão de Histórico (CRUD)**: Possibilidade de excluir registros individuais ou limpar todo o histórico. [NEW]
+- **Exportação de Dados**: Download do histórico de consultas nos formatos **JSON** e **CSV**. [NEW]
+- **Geolocalização**: Detecção automática de cidade baseada na localização do navegador (OpenStreetMap). [NEW]
 - **Widgets Dinâmicos**: Integração com Google Maps e buscas automáticas no YouTube para a cidade.
 - **Histórico & Logs**: Persistência de consultas recentes e termos buscados no PostgreSQL.
-- **UI Premium**: Interface Glassmorphism com Skeleton Loaders e animações fluidas.
-- **Resiliência**: Backend com **Axios Retries** e cliente Prisma otimizado (Singleton).
+- **UI Premium**: Interface Glassmorphism com temas dinâmicos (Dia/Noite), Skeleton Loaders e animações fluidas.
+- **Resiliência**: Backend com **Axios Retries**, deleções idempotentes e cliente Prisma otimizado.
 - **Segurança**: Proteção com Helmet, Rate Limit, CORS e documentação Swagger (/api-docs).
 
 ---
@@ -64,8 +68,9 @@ O projeto está organizado em duas partes principais:
 
 Ambas as camadas do projeto foram desenvolvidas seguindo práticas de **Clean Code**, **SOLID** e **TDD**:
 
-- **Backend**: ~90% de cobertura no `WeatherService.ts`.
-- **Frontend**: >84% de cobertura global (incluindo Suíte de Utils e Componentes).
+- **Backend**: **92.1%** de cobertura no `WeatherService.ts`.
+- **Frontend**: **89.7%** de cobertura no hook `useWeather.ts` e **80%** global em componentes críticos.
+- **Resiliência**: Validação completa de fluxos de erro e **rollback automático** de UI (Optimistic UI).
 
 ---
 
