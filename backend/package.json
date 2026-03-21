@@ -9,6 +9,7 @@
     "start": "node dist/app.js",
     "build": "tsc",
     "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
     "prisma:generate": "prisma generate",
     "prisma:push": "prisma db push"
   },
