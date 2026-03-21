@@ -1,50 +1,19 @@
-import axios from "axios";
-import axiosRetry from "axios-retry";
 import type { IWeather } from "../interfaces/IWeather.js";
 import type { IForecastDay } from "../interfaces/IForecastDay.js";
 import { WMO_WEATHER_CODES } from "../utils/weatherConstants.js";
-
-axiosRetry(axios, {
-  retries: 3,
-  retryDelay: axiosRetry.exponentialDelay,
-  retryCondition: (error) => {
-    return axiosRetry.isNetworkOrIdempotentRequestError(error) || error.code === "ECONNRESET";
-  },
-});
-
-import { prisma } from "../lib/prisma.js";
+import { MeteoProvider } from "./MeteoProvider.js";
+import { WeatherRepository } from "../repositories/WeatherRepository.js";
+import { CsvFormatter } from "../utils/CsvFormatter.js";
 
 export class WeatherService {
-  private static readonly GEO_URL = "https://geocoding-api.open-meteo.com/v1/search";
-  private static readonly WEATHER_URL = "https://api.open-meteo.com/v1/forecast";
-
   static async getWeather(city: string): Promise<IWeather> {
-    await prisma.searchLog.create({
-      data: { query: city },
-    });
+    await WeatherRepository.saveSearchLog(city);
 
-    const geoResponse = await axios.get(this.GEO_URL, {
-      params: { name: city, count: 1, language: "en", format: "json" },
-    });
+    const geo = await MeteoProvider.getGeocoding(city);
+    const weatherDataRaw = await MeteoProvider.getForecast(geo.latitude, geo.longitude);
 
-    if (!geoResponse.data.results || geoResponse.data.results.length === 0) {
-      throw new Error("City not found");
-    }
-
-    const { latitude, longitude, name } = geoResponse.data.results[0];
-
-    const weatherResponse = await axios.get(this.WEATHER_URL, {
-      params: {
-        latitude,
-        longitude,
-        current_weather: true,
-        daily: "weathercode,temperature_2m_max,temperature_2m_min",
-        timezone: "auto",
-      },
-    });
-
-    const current = weatherResponse.data.current_weather;
-    const daily = weatherResponse.data.daily;
+    const current = weatherDataRaw.current_weather;
+    const daily = weatherDataRaw.daily;
 
     const forecast: IForecastDay[] = [];
     if (daily) {
@@ -60,7 +29,7 @@ export class WeatherService {
     }
 
     const weatherData: IWeather = {
-      city: name,
+      city: geo.name,
       temp: current.temperature,
       description: this.getWeatherDescription(current.weathercode),
       humidity: 0,
@@ -70,16 +39,7 @@ export class WeatherService {
       recommendation: this.generateRecommendation(current.temperature, current.weathercode),
     };
 
-    await prisma.weatherRecord.create({
-      data: {
-        city: weatherData.city,
-        temp: weatherData.temp,
-        description: weatherData.description,
-        humidity: weatherData.humidity,
-        windSpeed: weatherData.windSpeed,
-        icon: weatherData.icon,
-      },
-    });
+    await WeatherRepository.createRecord(weatherData);
 
     return weatherData;
   }
@@ -101,41 +61,28 @@ export class WeatherService {
   }
 
   static async getHistory() {
-    return prisma.weatherRecord.findMany({
-      orderBy: { createdAt: "desc" },
-      take: 10,
-    });
+    return WeatherRepository.listHistory(10);
   }
 
   static async getSearchLogs() {
-    return prisma.searchLog.findMany({
-      orderBy: { timestamp: "desc" },
-      take: 20,
-    });
+    return WeatherRepository.listSearchLogs(20);
   }
 
   static async deleteHistoryRecord(id: string) {
-    return prisma.weatherRecord.deleteMany({
-      where: { id },
-    });
+    return WeatherRepository.deleteById(id);
   }
 
   static async clearHistory() {
-    return prisma.weatherRecord.deleteMany();
+    return WeatherRepository.clearAll();
   }
 
   static async exportHistory(format: "json" | "csv") {
-    const history = await prisma.weatherRecord.findMany({
-      orderBy: { createdAt: "desc" },
-    });
+    const history = await WeatherRepository.listAllHistory();
 
     if (format === "json") {
       return JSON.stringify(history, null, 2);
     }
 
-    const headers = "id,city,temp,description,humidity,windSpeed,icon,createdAt\n";
-    const rows = history.map((r) => `${r.id},"${r.city}",${r.temp},"${r.description}",${r.humidity},${r.windSpeed},"${r.icon}",${r.createdAt.toISOString()}`).join("\n");
-
-    return headers + rows;
+    return CsvFormatter.formatHistory(history);
   }
 }

@@ -16,10 +16,7 @@ export class WeatherController {
       const weather = await WeatherService.getWeather(city.trim());
       return res.status(200).json(weather);
     } catch (error) {
-      console.error("[getWeatherByCity]", error);
-      const status = error instanceof Error && error.message === "City not found" ? 404 : 500;
-      const message = error instanceof Error && status === 404 ? error.message : "An internal error occurred";
-      return res.status(status).json({ error: message });
+      return this.handleError(res, error, "getWeatherByCity");
     }
   }
 
@@ -28,8 +25,7 @@ export class WeatherController {
       const history = await WeatherService.getHistory();
       return res.status(200).json(history);
     } catch (error) {
-      console.error("[getHistory]", error);
-      return res.status(500).json({ error: "An internal error occurred" });
+      return this.handleError(res, error, "getHistory");
     }
   }
 
@@ -38,8 +34,7 @@ export class WeatherController {
       const logs = await WeatherService.getSearchLogs();
       return res.status(200).json(logs);
     } catch (error) {
-      console.error("[getSearchLogs]", error);
-      return res.status(500).json({ error: "An internal error occurred" });
+      return this.handleError(res, error, "getSearchLogs");
     }
   }
 
@@ -50,8 +45,7 @@ export class WeatherController {
       await WeatherService.deleteHistoryRecord(id as string);
       return res.status(204).send();
     } catch (error) {
-      console.error("[deleteRecord]", error);
-      return res.status(500).json({ error: "An internal error occurred" });
+      return this.handleError(res, error, "deleteRecord");
     }
   }
 
@@ -60,8 +54,7 @@ export class WeatherController {
       await WeatherService.clearHistory();
       return res.status(204).send();
     } catch (error) {
-      console.error("[clearAllHistory]", error);
-      return res.status(500).json({ error: "An internal error occurred" });
+      return this.handleError(res, error, "clearAllHistory");
     }
   }
 
@@ -71,6 +64,7 @@ export class WeatherController {
       if (format !== "json" && format !== "csv") {
         return res.status(400).json({ error: "Format must be json or csv" });
       }
+
       const data = await WeatherService.exportHistory(format);
       const filename = `weather_history_${new Date().toISOString().split("T")[0]}.${format}`;
 
@@ -78,8 +72,14 @@ export class WeatherController {
       res.setHeader("Content-Disposition", `attachment; filename=${filename}`);
       return res.status(200).send(data);
     } catch (error) {
-      console.error("[exportData]", error);
-      return res.status(500).json({ error: "An internal error occurred" });
+      return this.handleError(res, error, "exportData");
     }
+  }
+
+  private static handleError(res: Response, error: unknown, context: string) {
+    console.error(`[WeatherController:${context}]`, error);
+    const status = error instanceof Error && error.message === "City not found" ? 404 : 500;
+    const message = error instanceof Error && status === 404 ? error.message : "An internal error occurred";
+    return res.status(status).json({ error: message });
   }
 }

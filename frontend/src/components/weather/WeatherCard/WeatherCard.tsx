@@ -1,14 +1,13 @@
 import { GlassContainer } from "../../layout/GlassContainer";
 import { Weather } from "@/interfaces/Weather";
+import { translateDescription } from "@/utils/translations";
+import { getWeatherIcon } from "@/utils/weatherUtils";
+import { useLanguage } from "@/context/LanguageContext";
+import { WeatherRecommendation } from "./WeatherRecommendation";
 
 interface WeatherCardProps {
   weather: Weather;
 }
-
-import { translateDescription } from "@/utils/translations";
-import { getWeatherIcon } from "@/utils/weatherUtils";
-
-import { useLanguage } from "@/context/LanguageContext";
 
 export function WeatherCard({ weather }: Readonly<WeatherCardProps>) {
   const { language, t } = useLanguage();
@@ -36,11 +35,7 @@ export function WeatherCard({ weather }: Readonly<WeatherCardProps>) {
         </div>
       </div>
 
-      {weather.recommendation && (
-        <div className="mt-8 p-4 bg-(--card-bg) rounded-2xl border border-(--card-border) text-sm opacity-90 italic">
-          ✨ {t("weather.ai_insight")}: {t(weather.recommendation)}
-        </div>
-      )}
+      <WeatherRecommendation recommendation={weather.recommendation} />
     </GlassContainer>
   );
 }
