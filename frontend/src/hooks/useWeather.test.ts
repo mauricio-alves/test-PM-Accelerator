@@ -43,7 +43,7 @@ describe("useWeather", () => {
       await result.current.searchCity("Unknown");
     });
 
-    expect(result.current.error).toBe("Cidade não encontrada. Verifique o nome e tente novamente.");
+    expect(result.current.error).toBe("error.city_not_found");
     expect(result.current.loading).toBe(false);
   });
 
@@ -56,7 +56,58 @@ describe("useWeather", () => {
       await result.current.searchCity("Error");
     });
 
-    expect(result.current.error).toBe("Erro inesperado. Tente novamente.");
+    expect(result.current.error).toBe("error.unexpected");
     expect(result.current.loading).toBe(false);
+  });
+
+  it("should handle network error (ERR_NETWORK) during search", async () => {
+    const networkError = {
+      isAxiosError: true,
+      code: "ERR_NETWORK",
+    };
+    vi.mocked(weatherService.getWeather).mockRejectedValue(networkError);
+
+    const { result } = renderHook(() => useWeather());
+
+    await act(async () => {
+      await result.current.searchCity("NoNetwork");
+    });
+
+    expect(result.current.error).toBe("error.network");
+    expect(result.current.loading).toBe(false);
+  });
+
+  it("should rollback history when deleteRecord fails", async () => {
+    const initialHistory = [{ id: "1", city: "São Paulo", temp: 20 }];
+    vi.mocked(weatherService.getHistory).mockResolvedValue(initialHistory as WeatherRecord[]);
+
+    const { result } = renderHook(() => useWeather());
+
+    await act(async () => {});
+
+    vi.mocked(weatherService.deleteRecord).mockRejectedValue(new Error("API Error"));
+
+    await act(async () => {
+      await result.current.deleteRecord("1");
+    });
+
+    expect(result.current.history).toEqual(initialHistory);
+  });
+
+  it("should rollback history when clearHistory fails", async () => {
+    const initialHistory = [{ id: "1", city: "São Paulo", temp: 20 }];
+    vi.mocked(weatherService.getHistory).mockResolvedValue(initialHistory as WeatherRecord[]);
+
+    const { result } = renderHook(() => useWeather());
+
+    await act(async () => {});
+
+    vi.mocked(weatherService.clearHistory).mockRejectedValue(new Error("API Error"));
+
+    await act(async () => {
+      await result.current.clearHistory();
+    });
+
+    expect(result.current.history).toEqual(initialHistory);
   });
 });
